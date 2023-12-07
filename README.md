@@ -1,22 +1,22 @@
-# Configurable Enterprise Chat Agent
-This Chat Agent is build specifically as a reusable and configurable sample app to share with enterprises or prospects. 
+# Configurable Enterprise Chabot
+This Chatbot is build specifically as a reusable and configurable sample app to share with enterprises or prospects. 
 
-1. It uses [LangChain](https://www.langchain.com/) as the framework to easily set up LLM Q&A chains
-2. It uses [Streamlit](https://streamlit.io/) as the framework to easily create Web Applications
-3. It uses [Astra DB](https://astra.datastax.com/) as the Vector Store to enable Rerieval Augmented Generation in order to provide meaningfull contextual interactions
-4. It uses [Astra DB](https://astra.datastax.com/) as Short Term Memory to keep track of what was said and generated
-5. It uses a StreamingCallbackHandler to stream output to the screen which prevents having to wait for the final answer
-6. It allows for new Content to be uploaded, Vectorized and Stored into the Astra DB Vector Database so it can be used as Context
-7. It offers a configurable localization through `localization.csv`
-8. It offers a guided experience on-rails through `rails.csv`
+1. 🤩 It leverages [DataStax RAGStack](https://docs.datastax.com/en/ragstack/docs/index.html) for production-ready use of the following components:
+    -  🚀 The [Astra DB Vector Store](https://db.new) for Semantic Similarity search to enable Retrieval Augmented Generation
+    - 🧠 It uses [Astra DB](https://astra.datastax.com/) as Longer Term Memory to keep track of what was said and generated
+    - 🦜🔗 [LangChain](https://www.langchain.com) for linking OpenAI and Astra DB
+2. 👑 It uses [Streamlit](https://streamlit.io/) as the framework to easily create Web Applications
+3. It uses a StreamingCallbackHandler to stream output to the screen which prevents having to wait for the final answer
+4. It allows for new Content to be uploaded, Vectorized and Stored into the Astra DB Vector Database so it can be used as Context
+5. It offers a configurable localization through `localization.csv`
+6. It offers a guided experience on-rails through `rails.csv`
 
 ## Preparations
 1. First install the Python dependencies using:
 ```
 pip3 install -r requirements.txt
 ```
-2. Download your Astra DB Secure Connect Bundle and place it in the `streamlit-langchain` directory.
-3. Then update the `OpenAI`, `AstraDB` and optionally `LangSmith` secrets in `streamlit-langchain/.streamlit/secrets.toml`. There is an example provided at `secrets.toml.example`.
+2. Then update the `OpenAI`, `AstraDB` and optionally `LangSmith` secrets in `streamlit-langchain/.streamlit/secrets.toml`. There is an example provided at `secrets.toml.example`.
 
 ## Customization
 Now it's time to customize the app for your specific situation or customers.

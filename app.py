@@ -1,28 +1,21 @@
 import os
 from pathlib import Path
 import hmac
-import streamlit as st
-os.environ["OPENAI_API_KEY"] = st.secrets['OPENAI_API_KEY']
-os.environ["LANGCHAIN_API_KEY"] = st.secrets['LANGCHAIN_API_KEY']
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = st.secrets['LANGCHAIN_ENDPOINT']
-os.environ["LANGCHAIN_PROJECT"] = st.secrets['LANGCHAIN_PROJECT']
-
+import tempfile
 import pandas as pd
+
+import streamlit as st
 
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 
 from langchain.chat_models import ChatOpenAI
-from langchain.vectorstores import Cassandra
+from langchain.vectorstores import AstraDB
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.memory import ConversationBufferWindowMemory
-from langchain.memory import CassandraChatMessageHistory
-
-import tempfile
+from langchain.memory import AstraDBChatMessageHistory
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader
-
 from langchain.schema import HumanMessage, AIMessage
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnableMap
@@ -178,16 +171,6 @@ lang_dict = load_localization(language)
 ### Resources Cache ###
 #######################
 
-# Cache Astra DB session for future runs
-@st.cache_resource(show_spinner=lang_dict['connect_astra'])
-def load_session():
-    print("load_session")
-    # Connect to Astra DB
-    cluster = Cluster(cloud={'secure_connect_bundle': st.secrets["ASTRA_SCB_PATH"]}, 
-                    auth_provider=PlainTextAuthProvider(st.secrets["ASTRA_CLIENT_ID"], 
-                                                        st.secrets["ASTRA_CLIENT_SECRET"]))
-    return cluster.connect()
-
 # Cache OpenAI Embedding for future runs
 @st.cache_resource(show_spinner=lang_dict['load_embedding'])
 def load_embedding():
@@ -200,11 +183,11 @@ def load_embedding():
 def load_vectorstore(username):
     print("load_vectorstore")
     # Get the load_vectorstore store from Astra DB
-    return Cassandra(
+    return AstraDB(
         embedding=embedding,
-        session=session,
-        keyspace='vector_preview',
-        table_name=f"vector_context_{username}"
+        collection_name=f"vector_context_{username}",
+        token=st.secrets["ASTRA_TOKEN"],
+        api_endpoint=os.environ["ASTRA_ENDPOINT"],
     )
     
 # Cache Retriever for future runs
@@ -232,11 +215,10 @@ def load_model():
 @st.cache_resource(show_spinner=lang_dict['load_message_history'])
 def load_chat_history(username):
     print("load_chat_history")
-    return CassandraChatMessageHistory(
+    return AstraDBChatMessageHistory(
         session_id=username,
-        session=session,
-        keyspace='vector_preview',
-        ttl_seconds = 864000 # Ten days
+        api_endpoint=os.environ["ASTRA_ENDPOINT"],
+        token=st.secrets["ASTRA_TOKEN"],
     )
 
 @st.cache_resource(show_spinner=lang_dict['load_message_history'])
@@ -304,7 +286,6 @@ with st.sidebar:
 # Initialize
 with st.sidebar:
     rails_dict = load_rails(username)
-    session = load_session()
     embedding = load_embedding()
     vectorstore = load_vectorstore(username)
     retriever = load_retriever()
@@ -415,4 +396,4 @@ if question := st.chat_input(lang_dict['assistant_question']):
         st.session_state.messages.append(AIMessage(content=content))
 
 with st.sidebar:
-            st.caption("v11.20.01")
+            st.caption("v231207.01")
