@@ -93,6 +93,9 @@ def check_password():
 def logout():
     del st.session_state.password_correct
     del st.session_state.user
+    del st.session_state.messages
+    st.cache_resource.clear()
+    st.cache_data.clear()
 
 # Function for Vectorizing uploaded data into Astra DB
 def vectorize_text(uploaded_files):
