@@ -3,7 +3,7 @@ This Chatbot is build specifically as a reusable and configurable sample app to 
 
 1. 🤩 It leverages [DataStax RAGStack](https://docs.datastax.com/en/ragstack/docs/index.html) for production-ready use of the following components:
     -  🚀 The [Astra DB Vector Store](https://db.new) for Semantic Similarity search to enable Retrieval Augmented Generation
-    - 🧠 It uses [Astra DB](https://astra.datastax.com/) as Longer Term Memory to keep track of what was said and generated
+    - 🧠 It uses [Astra DB](https://astra.datastax.com/) as Short Term Memory to keep track of what was said and generated
     - 🦜🔗 [LangChain](https://www.langchain.com) for linking OpenAI and Astra DB
 2. 👑 It uses [Streamlit](https://streamlit.io/) as the framework to easily create Web Applications
 3. It uses a StreamingCallbackHandler to stream output to the screen which prevents having to wait for the final answer
