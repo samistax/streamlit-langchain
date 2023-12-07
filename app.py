@@ -3,6 +3,7 @@ from pathlib import Path
 import hmac
 import tempfile
 import pandas as pd
+import uuid
 
 import streamlit as st
 
@@ -23,6 +24,10 @@ from langchain.schema.runnable import RunnableMap
 from langchain.callbacks.base import BaseCallbackHandler
 
 print("Started")
+
+# Get a unique session id for memory
+if "session_id" not in st.session_state:
+    st.session_state.session_id = uuid.uuid4()
 
 # Streaming call back handler for responses
 class StreamHandler(BaseCallbackHandler):
@@ -217,9 +222,9 @@ def load_model():
 # Cache Chat History for future runs
 @st.cache_resource(show_spinner=lang_dict['load_message_history'])
 def load_chat_history(username):
-    print("load_chat_history")
+    print(f"load_chat_history for {username}_{st.session_state.session_id}")
     return AstraDBChatMessageHistory(
-        session_id=username,
+        session_id=f"{username}_{st.session_state.session_id}",
         api_endpoint=os.environ["ASTRA_ENDPOINT"],
         token=st.secrets["ASTRA_TOKEN"],
     )
